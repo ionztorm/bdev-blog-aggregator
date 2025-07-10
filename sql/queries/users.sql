@@ -15,3 +15,9 @@ WHERE
 -- name: DeleteUsers :exec
 DELETE FROM users;
 
+-- name: ListUsers :many
+SELECT
+    name
+FROM
+    users;
+
