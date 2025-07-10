@@ -6,6 +6,7 @@ import (
 	"gator/internal/config"
 	"gator/internal/database"
 	"gator/internal/state"
+	"gator/pkg/utils"
 	"os"
 
 	_ "github.com/lib/pq"
@@ -18,15 +19,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	_, dbQueries, err := database.ConnectToDB(cfg)
+	db, err := database.ConnectToDB(cfg)
 	if err != nil {
 		fmt.Println("Failed to connect to DB:", err)
 		os.Exit(1)
 	}
+	defer utils.SafeClose(db.SQL)
 
 	appState := &state.State{
 		Cfg: &cfg,
-		DB:  dbQueries,
+		DB:  db.Queries,
 	}
 
 	cmdRegistry := command.GetCmdRegistry()
