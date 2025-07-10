@@ -3,9 +3,14 @@ package command
 import (
 	"errors"
 	"fmt"
+	"gator/internal/state"
 )
 
-func HandleLogin(s *State, cmd Command) error {
+func init() {
+	registerGlobal("login", HandleLogin)
+}
+
+func HandleLogin(s *state.State, cmd Command) error {
 	if len(cmd.Args) == 0 {
 		return errors.New("login requires a username argument")
 	}
