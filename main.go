@@ -4,25 +4,32 @@ import (
 	"fmt"
 	"gator/internal/command"
 	"gator/internal/config"
+	"gator/internal/database"
+	"gator/internal/state"
 	"os"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
-
 	cfg, err := config.Read()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Failed to read config:", err)
+		os.Exit(1)
 	}
 
-	state := &command.State{
+	_, dbQueries, err := database.ConnectToDB(cfg)
+	if err != nil {
+		fmt.Println("Failed to connect to DB:", err)
+		os.Exit(1)
+	}
+
+	appState := &state.State{
 		Cfg: &cfg,
+		DB:  dbQueries,
 	}
 
-	cmdRegistry := command.Commands{
-		Handlers: make(map[string]func(*command.State, command.Command) error),
-	}
-
-	cmdRegistry.Register("login", command.HandleLogin)
+	cmdRegistry := command.GetCmdRegistry()
 
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: gator <command> [args...]")
@@ -37,7 +44,7 @@ func main() {
 		Args: cmdArgs,
 	}
 
-	if err := cmdRegistry.Run(state, cmd); err != nil {
+	if err := cmdRegistry.Run(appState, cmd); err != nil {
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}

@@ -3,7 +3,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"gator/internal/utils"
+	"gator/pkg/utils"
 	"os"
 	"path/filepath"
 )
