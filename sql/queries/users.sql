@@ -12,3 +12,6 @@ FROM
 WHERE
     name = $1;
 
+-- name: DeleteUsers :exec
+DELETE FROM users;
+
