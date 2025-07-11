@@ -17,7 +17,7 @@ func HandleListUsers(s *state.State, cmd Command) error {
 	}
 
 	for _, user := range users {
-		username := user.String
+		username := user
 		if username == s.Cfg.CurrentUserName {
 			username = fmt.Sprintf("%v (current)", username)
 		}

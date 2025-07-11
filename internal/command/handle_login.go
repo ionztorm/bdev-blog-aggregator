@@ -20,12 +20,8 @@ func HandleLogin(s *state.State, cmd Command) error {
 	username := cmd.Args[0]
 
 	ctx := context.Background()
-	name := sql.NullString{
-		String: username,
-		Valid:  true,
-	}
 
-	_, err := s.DB.GetUser(ctx, name)
+	_, err := s.DB.GetUser(ctx, username)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return fmt.Errorf("user %q does not exist", username)

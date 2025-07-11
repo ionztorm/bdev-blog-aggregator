@@ -23,12 +23,8 @@ func HandleRegister(s *state.State, cmd Command) error {
 
 	username := cmd.Args[0]
 	ctx := context.Background()
-	name := sql.NullString{
-		String: username,
-		Valid:  true,
-	}
 
-	_, err := s.DB.GetUser(ctx, name)
+	_, err := s.DB.GetUser(ctx, username)
 	if err != nil && err != sql.ErrNoRows {
 		return fmt.Errorf("error checking for user existence: %w", err)
 	}
@@ -43,7 +39,7 @@ func HandleRegister(s *state.State, cmd Command) error {
 		ID:        id,
 		CreatedAt: now,
 		UpdatedAt: now,
-		Name:      name,
+		Name:      username,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create user: %w", err)

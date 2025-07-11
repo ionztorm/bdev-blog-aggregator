@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -24,7 +23,7 @@ type CreateUserParams struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	Name      sql.NullString
+	Name      string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -62,7 +61,7 @@ WHERE
     name = $1
 `
 
-func (q *Queries) GetUser(ctx context.Context, name sql.NullString) (User, error) {
+func (q *Queries) GetUser(ctx context.Context, name string) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUser, name)
 	var i User
 	err := row.Scan(
@@ -81,15 +80,15 @@ FROM
     users
 `
 
-func (q *Queries) ListUsers(ctx context.Context) ([]sql.NullString, error) {
+func (q *Queries) ListUsers(ctx context.Context) ([]string, error) {
 	rows, err := q.db.QueryContext(ctx, listUsers)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []sql.NullString
+	var items []string
 	for rows.Next() {
-		var name sql.NullString
+		var name string
 		if err := rows.Scan(&name); err != nil {
 			return nil, err
 		}
