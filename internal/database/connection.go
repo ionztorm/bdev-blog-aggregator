@@ -4,6 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"gator/internal/config"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type DB struct {
@@ -22,4 +25,8 @@ func ConnectToDB(cfg config.Config) (*DB, error) {
 	}
 
 	return &DB{SQL: db, Queries: New(db)}, nil
+}
+
+func GetCommonDBFields() (uuid.UUID, time.Time) {
+	return uuid.New(), time.Now()
 }
