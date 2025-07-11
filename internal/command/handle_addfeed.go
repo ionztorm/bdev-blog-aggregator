@@ -6,16 +6,15 @@ import (
 	"fmt"
 	"gator/internal/database"
 	"gator/internal/state"
-	"time"
 
 	"github.com/google/uuid"
 )
 
 func init() {
-	registerGlobal("addfeed", HandleAddFeed)
+	registerGlobal("addfeed", middlewareLoggedIn(HandleAddFeed))
 }
 
-func HandleAddFeed(s *state.State, cmd Command) error {
+func HandleAddFeed(s *state.State, cmd Command, user database.User) error {
 	if len(cmd.Args) < 2 {
 		return errors.New("usage: addfeed <feedname> <url>")
 	}
@@ -23,20 +22,12 @@ func HandleAddFeed(s *state.State, cmd Command) error {
 	feedName := cmd.Args[0]
 	feedURL := cmd.Args[1]
 
-	uuid := uuid.New()
-	now := time.Now()
-
-	currentUser := s.Cfg.CurrentUserName
-
-	user, err := s.DB.GetUser(context.Background(), currentUser)
-	if err != nil {
-		return fmt.Errorf("unable to locate user '%s': %w", currentUser, err)
-	}
+	feedId, now := database.GetCommonDBFields()
 
 	userId := user.ID
 
 	feed, err := s.DB.CreateFeed(context.Background(), database.CreateFeedParams{
-		ID:        uuid,
+		ID:        feedId,
 		CreatedAt: now,
 		UpdatedAt: now,
 		Name:      feedName,
@@ -46,6 +37,17 @@ func HandleAddFeed(s *state.State, cmd Command) error {
 
 	if err != nil {
 		return fmt.Errorf("failed to create feed: %w", err)
+	}
+
+	_, err = s.DB.CreateFeedFollow(context.Background(), database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		UserID:    userId,
+		FeedID:    feedId,
+		CreatedAt: now,
+		UpdatedAt: now,
+	})
+	if err != nil {
+		return fmt.Errorf("error following new feed: %w", err)
 	}
 
 	fmt.Printf("%+v\n", feed)
