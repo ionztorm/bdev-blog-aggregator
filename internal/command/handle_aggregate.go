@@ -3,7 +3,7 @@ package command
 import (
 	"errors"
 	"fmt"
-	"gator/internal/rss"
+	"gator/internal/aggregate"
 	"gator/internal/state"
 	"time"
 )
@@ -26,6 +26,6 @@ func HandleAggregate(s *state.State, cmd Command) error {
 	ticker := time.NewTicker(interval)
 
 	for ; ; <-ticker.C {
-		rss.ScrapeFeeds(s)
+		aggregate.ScrapeFeeds(s)
 	}
 }
