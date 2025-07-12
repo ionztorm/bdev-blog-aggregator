@@ -3,7 +3,8 @@ package command
 import (
 	"context"
 	"fmt"
-	"gator/internal/state"
+
+	"github.com/ionztorm/gator/internal/state"
 )
 
 func init() {

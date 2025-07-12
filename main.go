@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"gator/internal/command"
-	"gator/internal/config"
-	"gator/internal/database"
-	"gator/internal/state"
-	"gator/pkg/utils"
 	"os"
+
+	"github.com/ionztorm/gator/internal/command"
+	"github.com/ionztorm/gator/internal/config"
+	"github.com/ionztorm/gator/internal/database"
+	"github.com/ionztorm/gator/internal/state"
+	"github.com/ionztorm/gator/pkg/utils"
 
 	_ "github.com/lib/pq"
 )

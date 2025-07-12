@@ -3,8 +3,9 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"gator/internal/config"
 	"time"
+
+	"github.com/ionztorm/gator/internal/config"
 
 	"github.com/google/uuid"
 )

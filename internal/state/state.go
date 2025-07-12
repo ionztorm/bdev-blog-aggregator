@@ -2,8 +2,9 @@ package state
 
 import (
 	"database/sql"
-	"gator/internal/config"
-	"gator/internal/database"
+
+	"github.com/ionztorm/gator/internal/config"
+	"github.com/ionztorm/gator/internal/database"
 )
 
 type State struct {

@@ -3,9 +3,10 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"gator/pkg/utils"
 	"os"
 	"path/filepath"
+
+	"github.com/ionztorm/gator/pkg/utils"
 )
 
 const configFileName = ".gatorconfig.json"

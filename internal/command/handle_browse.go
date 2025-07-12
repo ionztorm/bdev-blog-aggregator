@@ -3,10 +3,11 @@ package command
 import (
 	"context"
 	"fmt"
-	"gator/internal/database"
-	"gator/internal/state"
 	"log"
 	"strconv"
+
+	"github.com/ionztorm/gator/internal/database"
+	"github.com/ionztorm/gator/internal/state"
 )
 
 func init() {

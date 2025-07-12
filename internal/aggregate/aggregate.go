@@ -5,14 +5,15 @@ import (
 	"database/sql"
 	"encoding/xml"
 	"fmt"
-	"gator/internal/database"
-	"gator/internal/state"
-	"gator/pkg/utils"
 	"html"
 	"io"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/ionztorm/gator/internal/database"
+	"github.com/ionztorm/gator/internal/state"
+	"github.com/ionztorm/gator/pkg/utils"
 
 	"github.com/lib/pq"
 )

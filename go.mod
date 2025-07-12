@@ -1,4 +1,4 @@
-module gator
+module github.com/ionztorm/gator
 
 go 1.24.4
 

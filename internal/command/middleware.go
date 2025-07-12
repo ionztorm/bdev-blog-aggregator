@@ -3,8 +3,9 @@ package command
 import (
 	"context"
 	"fmt"
-	"gator/internal/database"
-	"gator/internal/state"
+
+	"github.com/ionztorm/gator/internal/database"
+	"github.com/ionztorm/gator/internal/state"
 )
 
 func middlewareLoggedIn(handler func(s *state.State, cmd Command, user database.User) error) func(*state.State, Command) error {

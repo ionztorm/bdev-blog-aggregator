@@ -2,7 +2,8 @@ package command
 
 import (
 	"fmt"
-	"gator/internal/state"
+
+	"github.com/ionztorm/gator/internal/state"
 )
 
 type Command struct {

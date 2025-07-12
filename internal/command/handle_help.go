@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"gator/internal/state"
+	"github.com/ionztorm/gator/internal/state"
 )
 
 var helpNotes = map[string]string{

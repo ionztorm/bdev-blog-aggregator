@@ -3,9 +3,10 @@ package command
 import (
 	"errors"
 	"fmt"
-	"gator/internal/aggregate"
-	"gator/internal/state"
 	"time"
+
+	"github.com/ionztorm/gator/internal/aggregate"
+	"github.com/ionztorm/gator/internal/state"
 )
 
 func init() {
