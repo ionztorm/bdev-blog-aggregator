@@ -7,40 +7,40 @@
     - [Learning](#learning)
   - [How It Works](#how-it-works)
   - [Requirements](#requirements)
-  - [Installing requirments](#installing-requirments)
+  - [Installing Requirements](#installing-requirements)
     - [Install Go](#install-go)
-    - [Install postgres](#install-postgres)
-      - [Install](#install)
-      - [Check it worked](#check-it-worked)
+    - [Install PostgreSQL](#install-postgresql)
+      - [Installation](#installation)
+      - [Verify Installation](#verify-installation)
       - [Linux Only: Set a Password](#linux-only-set-a-password)
-      - [Start the server](#start-the-server)
-      - [Connect](#connect)
+      - [Start the Server](#start-the-server)
+      - [Connect to PostgreSQL](#connect-to-postgresql)
       - [Create a Database](#create-a-database)
-  - [Create the config file](#create-the-config-file)
+  - [Create the Config File](#create-the-config-file)
   - [Installing the Application](#installing-the-application)
-  - [Usage / Commands](#usage-commands)
+  - [Usage / Commands](#usage--commands)
   <!--toc:end-->
 
 ## Introduction
 
-A customisable RSS feed aggregator written in Go that allows multiple users to manage their own personalised feed subscriptions on the same machine.
+**bdev-blog-aggregator** is a customizable RSS feed aggregator written in Go that allows multiple users to manage their own personalized feed subscriptions on the same machine.
 
-Users can register, add or remove their favourite RSS feeds, and browse the latest posts aggregated from those feeds. The app fetches and stores posts in a database, providing a simple command-line interface to interact with personalised content.
+Users can register, add or remove their favorite RSS feeds, and browse the latest posts aggregated from those feeds. The app fetches and stores posts in a database, providing a simple command-line interface to interact with personalized content.
 
 ### Learning
 
 This project was completed as part of the Golang backend path with [Boot.dev](https://boot.dev).
 
-This project taught me a great deal about building backend systems and working with real-world tools and data. Specifically, I learned:
+Key learnings include:
 
-- **Writing SQL with Goose and SQLC**: I became familiar with managing migrations using Goose and generating type-safe database code with SQLC.
-- **Installing and running PostgreSQL locally**: Setting up the database and integrating it with Go gave me practical experience with managing a relational database.
-- **Command-line interface design**: I used `os.Args` to parse CLI arguments and designed a multi-command tool with clear functionality.
-- **Middleware concepts**: I introduced simple middleware logic to handle user login state and command protection.
+- **Writing SQL with Goose and SQLC**: Managing migrations using Goose and generating type-safe database code with SQLC.
+- **Installing and running PostgreSQL locally**: Practical experience setting up a relational database and integrating it with Go.
+- **Command-line interface design**: Parsing CLI arguments with `os.Args` and designing a multi-command tool.
+- **Middleware concepts**: Implemented simple middleware logic for user login state and command protection.
 
-In addition to the core curriculum from Boot.dev, I took the opportunity to **introduce directory structuring** into the project. This helped me better organise the codebase and understand how to split responsibilities across packages — a useful skill for building scalable Go applications.
+Additionally, I introduced **directory structuring** to better organize the codebase, enhancing maintainability and scalability.
 
-I have since removed the need for goose. I have built my own up/down migration parser and embedded the sql files into the build.
+> Note: The dependency on Goose was later removed, replaced with a custom up/down migration parser embedding SQL files into the build.
 
 ## How It Works
 
@@ -49,63 +49,63 @@ This project includes:
 - A **PostgreSQL database** to persist user accounts, feeds, and posts.
 - A **Go backend** that:
   - Parses RSS feeds using XML.
-  - Stores new posts and avoids duplicates.
+  - Stores new posts while avoiding duplicates.
   - Handles user authentication and feed management.
-- A **command-line interface** that acts as the main user interface for interacting with the aggregator.
-- A **background aggregator loop** that fetches posts from followed feeds at a configured interval.
+- A **command-line interface** that acts as the primary user interface.
+- A **background aggregator loop** that fetches posts from followed feeds at configurable intervals.
 
 ## Requirements
 
 - Go (version 1.20 or later recommended)
 - PostgreSQL database
-- Unix-like environment (Linux, macOS) or Windows with compatible terminal
-- Network access to fetch RSS feeds from the internet
+- Unix-like environment (Linux, macOS) or Windows with a compatible terminal
+- Network access to fetch RSS feeds
 
-## Installing requirments
+## Installing Requirements
 
 ### Install Go
 
-Download the latest binary from the [official go webpage](https://go.dev/doc/install) and follow the installation instructions.
+Download the latest version from the [official Go installation page](https://go.dev/doc/install) and follow the platform-specific instructions.
 
-### Install postgres
+### Install PostgreSQL
 
-#### Install
+#### Installation
 
 ```bash
-# Mac
+# macOS
 brew install postgresql@15
 
-# Linux
+# Linux (Debian/Ubuntu)
 sudo apt update
 sudo apt install postgresql postgresql-contrib
 ```
 
-#### Check it worked
+#### Verify Installation
 
 ```bash
 psql --version
 ```
 
-#### Linux Only: Set a Password
+#### Linux Only: Set a Password for the `postgres` User
 
 ```bash
 sudo passwd postgres
 ```
 
-#### Start the server
+#### Start the Server
 
 ```bash
-# Mac
+# macOS
 brew services start postgresql@15
 
 # Linux
 sudo service postgresql start
 ```
 
-#### Connect
+#### Connect to PostgreSQL
 
 ```bash
-# Mac
+# macOS
 psql postgres
 
 # Linux
@@ -114,17 +114,17 @@ sudo -u postgres psql
 
 #### Create a Database
 
-```bash
+```sql
 CREATE DATABASE gator;
 ```
 
-## Create the config file
+## Create the Config File
 
 ```bash
 touch ~/.gatorconfig.json
 ```
 
-Open the config, and add:
+Open the file and add the following content:
 
 ```json
 {
@@ -132,37 +132,37 @@ Open the config, and add:
 }
 ```
 
-The database address should look like this:
+Example database URLs:
 
-macOS (no password, your username):
+- macOS (no password, replace `<username>` with your system username):
 
-```text
-postgres://<username>:@localhost:5432/gator
-```
+  ```
+  postgres://<username>:@localhost:5432/gator
+  ```
 
-Linux (password from last lesson, postgres user):
+- Linux (replace `<username>` and `<password>` accordingly):
 
-```text
-postgres://<username>:<password>@localhost:5432/gator
-```
+  ```
+  postgres://<username>:<password>@localhost:5432/gator
+  ```
 
 ## Installing the Application
 
-Make sure you have Go installed (see [Requirements](#requirements)).
+Make sure Go is installed (see [Requirements](#requirements)).
 
-Then, install the application by running:
+Install the application:
 
 ```bash
 go install github.com/ionztorm/bdev-blog-aggregator@latest
 ```
 
-Make sure your Go bin directory is in your system PATH so you can run the command from anywhere:
+Ensure your Go binary directory is in your system PATH:
 
 ```bash
 export PATH=$PATH:$(go env GOPATH)/bin
 ```
 
-Run the following to setup the database tables:
+Initialise the database tables:
 
 ```bash
 gator migrate up
@@ -171,7 +171,7 @@ gator migrate up
 ## Usage / Commands
 
 ```bash
-gator help [command]             # Show help information for all commands, or detailed help for a specific command
+gator help [command]             # Show help info for all commands or detailed help for a specific command
 gator migrate [up|down]          # Apply or rollback SQL schema migrations
 gator register <name>            # Register a new user
 gator login <name>               # Log in as an existing user
