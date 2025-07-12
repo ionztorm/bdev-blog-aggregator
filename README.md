@@ -118,6 +118,22 @@ sudo -u postgres psql
 CREATE DATABASE gator;
 ```
 
+#### Verify it worked
+
+```bash
+\l
+```
+
+#### Exit
+
+Just type:
+
+```bash
+exit
+```
+
+Hit enter.
+
 ## Create the Config File
 
 ```bash
@@ -132,19 +148,23 @@ Open the file and add the following content:
 }
 ```
 
-Example database URLs:
+**Example database addaresses**
 
-- macOS (no password, replace `<username>` with your system username):
+- macOS (no password required):
 
-  ```
-  postgres://<username>:@localhost:5432/gator
-  ```
+Replace <username> with your macOS system username (you can run whoami in your terminal to check).
 
-- Linux (replace `<username>` and `<password>` accordingly):
+```perl
+postgres://<username>:@localhost:5432/gator
+```
 
-  ```
-  postgres://<username>:<password>@localhost:5432/gator
-  ```
+- Linux (password usually required for postgres user):
+
+Replace <username> and <password> with the values you set up (typically postgres).
+
+```perl
+postgres://<username>:<password>@localhost:5432/gator
+```
 
 ## Installing the Application
 
