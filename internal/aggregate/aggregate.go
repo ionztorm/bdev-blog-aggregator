@@ -1,4 +1,4 @@
-package rss
+package aggregate
 
 import (
 	"context"
@@ -10,8 +10,11 @@ import (
 	"gator/pkg/utils"
 	"html"
 	"io"
+	"log"
 	"net/http"
 	"time"
+
+	"github.com/lib/pq"
 )
 
 type RSSFeed struct {
@@ -74,7 +77,7 @@ func FetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 }
 
 func ScrapeFeeds(s *state.State) {
-	nextFeed, err := s.DB.GetNextFeedToFetch(context.Background())
+	currentFeed, err := s.DB.GetNextFeedToFetch(context.Background())
 	if err == sql.ErrNoRows {
 		fmt.Println("No feeds available to fetch.")
 		return
@@ -86,7 +89,7 @@ func ScrapeFeeds(s *state.State) {
 	now := time.Now()
 
 	err = s.DB.MarkFeedFetched(context.Background(), database.MarkFeedFetchedParams{
-		ID:            nextFeed.ID,
+		ID:            currentFeed.ID,
 		UpdatedAt:     now,
 		LastFetchedAt: sql.NullTime{Time: now, Valid: true},
 	})
@@ -96,7 +99,7 @@ func ScrapeFeeds(s *state.State) {
 		return
 	}
 
-	feedContent, err := FetchFeed(context.Background(), nextFeed.Url)
+	feedContent, err := FetchFeed(context.Background(), currentFeed.Url)
 	if err != nil {
 		fmt.Printf("error fetching feed content: %v", err)
 		return
@@ -105,12 +108,45 @@ func ScrapeFeeds(s *state.State) {
 	items := feedContent.Channel.Item
 	separator := "================================"
 	fmt.Println(separator)
-	fmt.Printf("Scraping feed: %s (%s)\n", nextFeed.Name, nextFeed.Url)
-	fmt.Printf("Found %d items in the feed:\n", len(items))
+	fmt.Printf("Scraping feed: %s (%s)\n", currentFeed.Name, currentFeed.Url)
+	fmt.Printf("Found %d items in the feed. Adding items to database.\n", len(items))
 	fmt.Println(separator)
 	fmt.Println()
 
 	for _, item := range items {
-		fmt.Println(" * ", item.Title)
+		id, now := database.GetCommonDBFields()
+		publishedAt := sql.NullTime{}
+		t, err := time.Parse(time.RFC1123Z, item.PubDate)
+		if err == nil {
+			publishedAt = sql.NullTime{
+				Time:  t,
+				Valid: true,
+			}
+		}
+		desc := sql.NullString{
+			String: item.Description,
+			Valid:  true,
+		}
+		err = s.DB.CreatePost(context.Background(), database.CreatePostParams{
+			ID:          id,
+			CreatedAt:   now,
+			UpdatedAt:   now,
+			Title:       item.Title,
+			Url:         item.Link,
+			Description: desc,
+			PublishedAt: publishedAt,
+			FeedID:      currentFeed.ID,
+		})
+		if err != nil {
+			if pgErr, ok := err.(*pq.Error); ok {
+				if pgErr.Code == "23505" {
+					log.Println("Duplicate post -- ignoring")
+				} else {
+					log.Printf("Post insertion failed for URL %s: %s", item.Link, pgErr.Message)
+				}
+			} else {
+				log.Printf("Unknown error inserting post for URL %s: %v", item.Link, err)
+			}
+		}
 	}
 }
