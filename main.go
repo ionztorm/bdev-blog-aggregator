@@ -27,8 +27,9 @@ func main() {
 	defer utils.SafeClose(db.SQL)
 
 	appState := &state.State{
-		Cfg: &cfg,
-		DB:  db.Queries,
+		Cfg:    &cfg,
+		DB:     db.Queries,
+		DBConn: db.SQL,
 	}
 
 	cmdRegistry := command.GetCmdRegistry()
