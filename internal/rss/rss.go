@@ -2,12 +2,16 @@ package rss
 
 import (
 	"context"
+	"database/sql"
 	"encoding/xml"
 	"fmt"
+	"gator/internal/database"
+	"gator/internal/state"
 	"gator/pkg/utils"
 	"html"
 	"io"
 	"net/http"
+	"time"
 )
 
 type RSSFeed struct {
@@ -38,7 +42,6 @@ func FetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	client := http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		// TODO
 		return &RSSFeed{}, fmt.Errorf("error making request: %w", err)
 	}
 	defer utils.SafeClose(res.Body)
@@ -68,4 +71,46 @@ func FetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	}
 
 	return &rssFeed, nil
+}
+
+func ScrapeFeeds(s *state.State) {
+	nextFeed, err := s.DB.GetNextFeedToFetch(context.Background())
+	if err == sql.ErrNoRows {
+		fmt.Println("No feeds available to fetch.")
+		return
+	} else if err != nil {
+		fmt.Printf("Error fetching next feed: %v\n", err)
+		return
+	}
+
+	now := time.Now()
+
+	err = s.DB.MarkFeedFetched(context.Background(), database.MarkFeedFetchedParams{
+		ID:            nextFeed.ID,
+		UpdatedAt:     now,
+		LastFetchedAt: sql.NullTime{Time: now, Valid: true},
+	})
+
+	if err != nil {
+		fmt.Println("There was a problem marking the feed as fetched.")
+		return
+	}
+
+	feedContent, err := FetchFeed(context.Background(), nextFeed.Url)
+	if err != nil {
+		fmt.Printf("error fetching feed content: %v", err)
+		return
+	}
+
+	items := feedContent.Channel.Item
+	separator := "================================"
+	fmt.Println(separator)
+	fmt.Printf("Scraping feed: %s (%s)\n", nextFeed.Name, nextFeed.Url)
+	fmt.Printf("Found %d items in the feed:\n", len(items))
+	fmt.Println(separator)
+	fmt.Println()
+
+	for _, item := range items {
+		fmt.Println(" * ", item.Title)
+	}
 }
