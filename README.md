@@ -40,6 +40,8 @@ This project taught me a great deal about building backend systems and working w
 
 In addition to the core curriculum from Boot.dev, I took the opportunity to **introduce directory structuring** into the project. This helped me better organise the codebase and understand how to split responsibilities across packages — a useful skill for building scalable Go applications.
 
+I have since removed the need for goose. I have built my own up/down migration parser and embedded the sql files into the build.
+
 ## How It Works
 
 This project includes:
@@ -160,9 +162,16 @@ Make sure your Go bin directory is in your system PATH so you can run the comman
 export PATH=$PATH:$(go env GOPATH)/bin
 ```
 
+Run the following to setup the database tables:
+
+```bash
+gator migrate up
+```
+
 ## Usage / Commands
 
 ```bash
+gator migrate [up|down]      # Migrate SQL schemas up or down
 gator register <name>        # Create a user
 gator login <name>           # Log in
 gator addfeed <url>          # Add an RSS feed (auto-follows it)
