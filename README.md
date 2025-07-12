@@ -171,16 +171,17 @@ gator migrate up
 ## Usage / Commands
 
 ```bash
-gator migrate [up|down]      # Migrate SQL schemas up or down
-gator register <name>        # Create a user
-gator login <name>           # Log in
-gator addfeed <url>          # Add an RSS feed (auto-follows it)
-gator feeds                  # List all feeds added by any user
-gator follow <url>           # Follow a feed
-gator following              # List feeds you’re currently following
-gator unfollow <url>         # Unfollow a feed
-gator agg <interval>         # Start the aggregator loop (interval: 5s, 1m, 1h, etc.)
-gator browse <limit>         # Browse posts from followed feeds (limit is optional)
-gator list users             # List all registered users
-gator reset                  # Delete all users and cascade-delete related data
+gator help [command]             # Show help information for all commands, or detailed help for a specific command
+gator migrate [up|down]          # Apply or rollback SQL schema migrations
+gator register <name>            # Register a new user
+gator login <name>               # Log in as an existing user
+gator addfeed <url>              # Add an RSS feed (automatically follows it)
+gator feeds                      # List all RSS feeds added by any user
+gator follow <url>               # Follow an existing feed
+gator following                  # Show feeds you are currently following
+gator unfollow <url>             # Unfollow a feed
+gator agg <interval>             # Start the aggregator loop (e.g. 5s, 1m, 1h)
+gator browse [limit]             # Browse recent posts from followed feeds (optional post limit)
+gator list users                 # List all registered users
+gator reset                      # Delete all users and their associated data (use with caution)
 ```
