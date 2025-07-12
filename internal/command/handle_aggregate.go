@@ -1,10 +1,11 @@
 package command
 
 import (
-	"context"
+	"errors"
 	"fmt"
 	"gator/internal/rss"
 	"gator/internal/state"
+	"time"
 )
 
 func init() {
@@ -12,13 +13,19 @@ func init() {
 }
 
 func HandleAggregate(s *state.State, cmd Command) error {
-	url := "https://www.wagslane.dev/index.xml"
-	result, err := rss.FetchFeed(context.Background(), url)
-	if err != nil {
-		return fmt.Errorf("failed to fetch feed from %s: %w", url, err)
+
+	if len(cmd.Args) < 1 {
+		return errors.New("usage: agg <interval>")
 	}
 
-	fmt.Println(result)
+	interval, err := time.ParseDuration(cmd.Args[0])
+	if err != nil {
+		return fmt.Errorf("invalid duration format: %w", err)
+	}
 
-	return nil
+	ticker := time.NewTicker(interval)
+
+	for ; ; <-ticker.C {
+		rss.ScrapeFeeds(s)
+	}
 }
