@@ -1,5 +1,26 @@
 # bdev-blog-aggregator
 
+<!--toc:start-->
+
+- [bdev-blog-aggregator](#bdev-blog-aggregator)
+  - [Introduction](#introduction)
+    - [Learning](#learning)
+  - [How It Works](#how-it-works)
+  - [Requirements](#requirements)
+  - [Installing requirments](#installing-requirments)
+    - [Install Go](#install-go)
+    - [Install postgres](#install-postgres)
+      - [Install](#install)
+      - [Check it worked](#check-it-worked)
+      - [Linux Only: Set a Password](#linux-only-set-a-password)
+      - [Start the server](#start-the-server)
+      - [Connect](#connect)
+      - [Create a Database](#create-a-database)
+  - [Create the config file](#create-the-config-file)
+  - [Installing the Application](#installing-the-application)
+  - [Usage / Commands](#usage-commands)
+  <!--toc:end-->
+
 ## Introduction
 
 A customisable RSS feed aggregator written in Go that allows multiple users to manage their own personalised feed subscriptions on the same machine.
@@ -19,7 +40,7 @@ This project taught me a great deal about building backend systems and working w
 
 In addition to the core curriculum from Boot.dev, I took the opportunity to **introduce directory structuring** into the project. This helped me better organise the codebase and understand how to split responsibilities across packages — a useful skill for building scalable Go applications.
 
-## ⚙️ How It Works
+## How It Works
 
 This project includes:
 
